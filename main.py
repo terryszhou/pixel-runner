@@ -1,15 +1,16 @@
+# # IMPORT MODULES - - - - - - - - - - - - - - - - - - -
 import pygame  # <-- import pygame 
 from sys import exit # <-- module that closes code once called
 
+# # SETUP BASIC VARIABLES - - - - - - - - - - - - - - - - - - -
 pygame.init() # <-- initialize pygame 
 screen = pygame.display.set_mode((800,400)) # <-- declare screen variable, set width & heigth 
 pygame.display.set_caption("Terry's Game of Life") # <-- changes window title
 clock = pygame.time.Clock()
 test_font = pygame.font.Font("font/Pixeltype.ttf", 50)
+game_active = True
 
-# test_surface = pygame.Surface((200,200)) # <-- solid color test screen
-# test_surface.fill("red")
-
+# # SURFACES & RECTANGLES - - - - - - - - - - - - - - - - - - -
 sky_surf = pygame.image.load("graphics/Sky.png").convert()
 ground_surf = pygame.image.load("graphics/ground.png").convert()
 
@@ -23,7 +24,10 @@ player_surf = pygame.image.load("graphics/player/player_walk_1.png").convert_alp
 player_rect = player_surf.get_rect(midbottom = (80,300)) # <-- creates rectangle around a given surface beginning from a given origin
 player_gravity = 0
 
+# # GAME LOOP - - - - - - - - - - - - - - - - - - -
 while True: # <-- runs forever, renders game, until player input sets False
+
+    # # EVENT HANDLING - - - - - - - - - - - - - - - - - - -
     for event in pygame.event.get(): # <-- gets events, loops through them
         if event.type == pygame.QUIT: # <-- closes out window if event type is QUIT
             pygame.quit()
@@ -31,29 +35,44 @@ while True: # <-- runs forever, renders game, until player input sets False
 
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
-                player_gravity = -20
+                if game_active:
+                    if player_rect.bottom == 300:
+                        player_gravity = -20
+                else: 
+                    game_active = True
+                    snail_rect.x = 600
 
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            if player_rect.collidepoint(event.pos):
-                player_gravity = -20
+    # # RENDER GAME IF GAME_ACTIVE = TRUE - - - - - - - - - - - - - - - - - - -
+    if game_active:
+        # # POST-EVENT RENDERING - - - - - - - - - - - - - - - - - - -
+        screen.blit(sky_surf, (0,0))
+        screen.blit(ground_surf, (0,300))
+        pygame.draw.rect(screen, (195,234,233), score_rect)
+        pygame.draw.rect(screen, (195,234,233), score_rect, 6) # <-- surface, color, which rectangle, width
+        screen.blit(score_surf, score_rect) # <-- block image transfer: places surface on screen
 
-    screen.blit(sky_surf, (0,0))
-    screen.blit(ground_surf, (0,300))
-    pygame.draw.rect(screen, (195,234,233), score_rect)
-    pygame.draw.rect(screen, (195,234,233), score_rect, 6) # <-- surface, color, which rectangle, width
-    screen.blit(score_surf, score_rect) # <-- block image transfer: places surface on screen
+        # # SNAIL MOVEMENT - - - - - - - - - - - - - - - - - - -
+        snail_rect.left -= 4
+        if snail_rect.left < -100:
+            snail_rect.left = 800
+        screen.blit(snail_surf, snail_rect)
 
-    snail_rect.left -= 4
-    if snail_rect.left < -100:
-        snail_rect.left = 800
-    screen.blit(snail_surf, snail_rect)
+        # # PLAYER MOVEMENT - - - - - - - - - - - - - - - - - - -
+        player_gravity += 1
+        player_rect.y += player_gravity
+        if player_rect.bottom >=300:
+            player_rect.bottom = 300
+        screen.blit(player_surf, player_rect)
 
-    player_gravity += 1
-    player_rect.y += player_gravity
-    if player_rect.bottom >=300:
-        player_rect.bottom = 300
-    screen.blit(player_surf, player_rect)
+        # # SNAIL COLLISION DETECTION - - - - - - - - - - - - - - - - - - -
+        if snail_rect.colliderect(player_rect):
+            game_active = False
 
+    # # RENDER GAME-OVER STATE  - - - - - - - - - - - - - - - - - - -
+    else:
+        screen.fill("Yellow")
+
+    # # UPDATE CLOCK AND DISPLAY - - - - - - - - - - - - - - - - - - -
     pygame.display.update() # <-- update the screen display
     clock.tick(60) # <-- sets while loop to cycle <x> times per second
 
@@ -72,6 +91,15 @@ while True: # <-- runs forever, renders game, until player input sets False
     # if player_rect.collidepoint(mouse_pos):
     #     print(pygame.mouse.get_pressed()) # <-- returns False if mouse button not pressed, True if pressed
 
+    # # BASIC JUMP ON MOUSE CLICK - - - - - - - - - - - - - - -
+    # if event.type == pygame.MOUSEBUTTONDOWN:
+    #     if player_rect.collidepoint(event.pos):
+    #         player_gravity = -20
+
     # # SAMPLE SHAPES - - - - - - - - - - - - - - - - -
     # pygame.draw.line(screen, "Gold", (0,0), (800,400), 10) # <-- surface, color, start-point, end-point, width
     # pygame.draw.ellipse(screen, "Brown", pygame.Rect(50, 200, 100, 100))
+
+    # # SAMPLE SURFACES
+    # test_surface = pygame.Surface((200,200)) # <-- solid color test screen
+    # test_surface.fill("red")
