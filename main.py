@@ -2,6 +2,13 @@
 import pygame  # <-- import pygame 
 from sys import exit # <-- module that closes code once called
 
+# # SCORE FUNCTION - - - - - - - - - - - - - - - - - - -
+def display_score():
+    current_time = int(pygame.time.get_ticks() / 1000) - start_time
+    score_surf = test_font.render(f"Score: {current_time}", False, (64,64,64))
+    score_rect = score_surf.get_rect(center = (400,50))
+    screen.blit(score_surf, score_rect)
+
 # # SETUP BASIC VARIABLES - - - - - - - - - - - - - - - - - - -
 pygame.init() # <-- initialize pygame 
 screen = pygame.display.set_mode((800,400)) # <-- declare screen variable, set width & heigth 
@@ -9,13 +16,11 @@ pygame.display.set_caption("Terry's Game of Life") # <-- changes window title
 clock = pygame.time.Clock()
 test_font = pygame.font.Font("font/Pixeltype.ttf", 50)
 game_active = True
+start_time = 0
 
 # # SURFACES & RECTANGLES - - - - - - - - - - - - - - - - - - -
 sky_surf = pygame.image.load("graphics/Sky.png").convert()
 ground_surf = pygame.image.load("graphics/ground.png").convert()
-
-score_surf = test_font.render("My Game", False, (64,64,64)) # <-- renders font with text, anti-aliasing Boolean, and color
-score_rect = score_surf.get_rect(center = (400,50))
 
 snail_surf = pygame.image.load("graphics/snail/snail1.png").convert_alpha()
 snail_rect = snail_surf.get_rect(midbottom = (600,300))
@@ -41,18 +46,20 @@ while True: # <-- runs forever, renders game, until player input sets False
                 else: 
                     game_active = True
                     snail_rect.x = 600
+                    start_time = int(pygame.time.get_ticks() / 1000)
 
     # # RENDER GAME IF GAME_ACTIVE = TRUE - - - - - - - - - - - - - - - - - - -
     if game_active:
         # # POST-EVENT RENDERING - - - - - - - - - - - - - - - - - - -
         screen.blit(sky_surf, (0,0))
         screen.blit(ground_surf, (0,300))
-        pygame.draw.rect(screen, (195,234,233), score_rect)
-        pygame.draw.rect(screen, (195,234,233), score_rect, 6) # <-- surface, color, which rectangle, width
-        screen.blit(score_surf, score_rect) # <-- block image transfer: places surface on screen
+        # pygame.draw.rect(screen, (195,234,233), score_rect)
+        # pygame.draw.rect(screen, (195,234,233), score_rect, 6) # <-- surface, color, which rectangle, width
+        # screen.blit(score_surf, score_rect) # <-- block image transfer: places surface on screen
+        display_score()
 
         # # SNAIL MOVEMENT - - - - - - - - - - - - - - - - - - -
-        snail_rect.left -= 4
+        snail_rect.left -= 6
         if snail_rect.left < -100:
             snail_rect.left = 800
         screen.blit(snail_surf, snail_rect)
@@ -76,30 +83,34 @@ while True: # <-- runs forever, renders game, until player input sets False
     pygame.display.update() # <-- update the screen display
     clock.tick(60) # <-- sets while loop to cycle <x> times per second
 
-    # # # SCRAP CODE
-    # # BASIC KEY DETECTOR - - - - - - - - - - - - - - - - - -
-    # keys = pygame.key.get_pressed()
-    # if keys[pygame.K_SPACE]:
-    #     print("jump")
+    # # # SCRAP CODE 
+        # # BASIC KEY DETECTOR - - - - - - - - - - - - - - - - - -
+        # keys = pygame.key.get_pressed()
+        # if keys[pygame.K_SPACE]:
+        #     print("jump")
 
-    # # BASIC COLLISION DETECTOR - - - - - - - - - - - - - - - - - -
-    # if player_rect.colliderect(snail_rect): # <-- returns 0 on non-collision, 1 on collision
-    #     print("Collision")
+        # # BASIC COLLISION DETECTOR - - - - - - - - - - - - - - - - - -
+        # if player_rect.colliderect(snail_rect): # <-- returns 0 on non-collision, 1 on collision
+        #     print("Collision")
 
-    # # BASIC MOUSE COLLISION DETECTOR - - - - - - - - - - - - - - - - - -
-    # mouse_pos = pygame.mouse.get_pos() # <-- sets coordinates for mouse cursor position
-    # if player_rect.collidepoint(mouse_pos):
-    #     print(pygame.mouse.get_pressed()) # <-- returns False if mouse button not pressed, True if pressed
+        # # BASIC MOUSE COLLISION DETECTOR - - - - - - - - - - - - - - - - - -
+        # mouse_pos = pygame.mouse.get_pos() # <-- sets coordinates for mouse cursor position
+        # if player_rect.collidepoint(mouse_pos):
+        #     print(pygame.mouse.get_pressed()) # <-- returns False if mouse button not pressed, True if pressed
 
-    # # BASIC JUMP ON MOUSE CLICK - - - - - - - - - - - - - - -
-    # if event.type == pygame.MOUSEBUTTONDOWN:
-    #     if player_rect.collidepoint(event.pos):
-    #         player_gravity = -20
+        # # BASIC JUMP ON MOUSE CLICK - - - - - - - - - - - - - - -
+        # if event.type == pygame.MOUSEBUTTONDOWN:
+        #     if player_rect.collidepoint(event.pos):
+        #         player_gravity = -20
 
-    # # SAMPLE SHAPES - - - - - - - - - - - - - - - - -
-    # pygame.draw.line(screen, "Gold", (0,0), (800,400), 10) # <-- surface, color, start-point, end-point, width
-    # pygame.draw.ellipse(screen, "Brown", pygame.Rect(50, 200, 100, 100))
+        # # SAMPLE SHAPES - - - - - - - - - - - - - - - - -
+        # pygame.draw.line(screen, "Gold", (0,0), (800,400), 10) # <-- surface, color, start-point, end-point, width
+        # pygame.draw.ellipse(screen, "Brown", pygame.Rect(50, 200, 100, 100))
 
-    # # SAMPLE SURFACES
-    # test_surface = pygame.Surface((200,200)) # <-- solid color test screen
-    # test_surface.fill("red")
+        # # SAMPLE SURFACES
+        # test_surface = pygame.Surface((200,200)) # <-- solid color test screen
+        # test_surface.fill("red")
+
+        # # SAMPLE SCORE TEXT
+        # score_surf = test_font.render("My Game", False, (64,64,64)) # <-- renders font with text, anti-aliasing Boolean, and color
+        # score_rect = score_surf.get_rect(center = (400,50))
