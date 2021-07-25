@@ -98,7 +98,7 @@ def collision_sprite():
 # # SETUP BASIC VARIABLES - - - - - - - - - - - - - - - - - - -
 pygame.init() # <-- initialize pygame 
 screen = pygame.display.set_mode((800,400)) # <-- declare screen variable, set width & heigth 
-pygame.display.set_caption("Terry's Game of Life") # <-- changes window title
+pygame.display.set_caption("Pixel Runner") # <-- changes window title
 clock = pygame.time.Clock()
 test_font = pygame.font.Font("font/Pixeltype.ttf", 50)
 game_active = False
