@@ -56,15 +56,18 @@ class Obstacle(pygame.sprite.Sprite):
     def __init__(self, type):
         super().__init__()
 
+        # self.speed = 6
         if type == "fly":
             fly_1 = pygame.image.load("graphics/Fly/fly1.png").convert_alpha()
             fly_2 = pygame.image.load("graphics/Fly/fly2.png").convert_alpha()
             self.frames = [fly_1, fly_2]
+            self.speed = 10
             y_pos = 210
         else:
             snail_1 = pygame.image.load("graphics/snail/snail1.png").convert_alpha()
             snail_2 = pygame.image.load("graphics/snail/snail2.png").convert_alpha()
             self.frames = [snail_1, snail_2]
+            self.speed = 6
             y_pos = 300
 
         self.animation_index = 0
@@ -79,7 +82,7 @@ class Obstacle(pygame.sprite.Sprite):
     
     def update(self):
         self.animation_state()
-        self.rect.x -= 6
+        self.rect.x -= self.speed
 
         # if self.rect.y < 264:
         #     if self.rect.y == 172:
@@ -156,7 +159,7 @@ def display_score():
 
 def collision_sprite():
     if pygame.sprite.spritecollide(player.sprite, obstacle_group, False): # <-- spritecollide(sprite, group, Boolean if group is destroyed)
-        player.sprite.rect = player.sprite.image.get_rect(midbottom = (80,300))
+        player.sprite.rect.midbottom = (80,300)
         obstacle_group.empty()
         return False
     else:
