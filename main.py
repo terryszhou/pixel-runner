@@ -22,12 +22,13 @@ class Player(pygame.sprite.Sprite):
 
     def player_input(self):
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_SPACE] and self.rect.bottom >= 300:
-            self.gravity = -20
-            self.jump_sound.play()
-        if keys[pygame.K_LEFT]:
+        if self.rect.bottom >= 300:
+            if keys[pygame.K_SPACE] or keys[pygame.K_UP] or keys[pygame.K_w]:
+                self.gravity = -20
+                self.jump_sound.play()
+        if keys[pygame.K_LEFT] or keys[pygame.K_a]:
             self.rect.x -= 3
-        if keys[pygame.K_RIGHT]:
+        if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
             self.rect.x += 3
 
     def apply_gravity(self):
@@ -49,6 +50,7 @@ class Player(pygame.sprite.Sprite):
         self.player_input()
         self.apply_gravity()
         self.animation_state()
+
 
 class Obstacle(pygame.sprite.Sprite):
     def __init__(self, type):
@@ -78,6 +80,15 @@ class Obstacle(pygame.sprite.Sprite):
     def update(self):
         self.animation_state()
         self.rect.x -= 6
+
+        # if self.rect.y < 264:
+        #     if self.rect.y == 172:
+        #         self.rect.y += 2
+        #     elif self.rect.y == 240:
+        #         self.rect.y -= 2
+
+        #     print(self.rect.y)
+
         self.destroy()
 
     def destroy(self):
@@ -145,6 +156,7 @@ def display_score():
 
 def collision_sprite():
     if pygame.sprite.spritecollide(player.sprite, obstacle_group, False): # <-- spritecollide(sprite, group, Boolean if group is destroyed)
+        player.sprite.rect = player.sprite.image.get_rect(midbottom = (80,300))
         obstacle_group.empty()
         return False
     else:
@@ -206,7 +218,7 @@ while True: # <-- runs forever, renders game, until player input sets False
                     start_time = int(pygame.time.get_ticks() / 1000)
         if game_active:
             if event.type == obstacle_timer:
-                obstacle_group.add(Obstacle(choice(["fly", "snail", "snail"])))
+                obstacle_group.add(Obstacle(choice(["fly", "snail"])))
 
     # # RENDER GAME IF GAME_ACTIVE = TRUE - - - - - - - - - - - - - - - - - - -
     if game_active:
