@@ -84,6 +84,57 @@ class Obstacle(pygame.sprite.Sprite):
         if self.rect.x <= -100:
             self.kill()
 
+class Background():
+    def __init__(self):
+        self.bgimage = pygame.image.load("graphics/Sky.png").convert()
+        self.bgimage2 = pygame.transform.flip(self.bgimage, True, False)
+        self.rectBGimg = self.bgimage.get_rect()
+
+        self.bgX1 = 0
+        self.bgY1 = 0
+
+        self.bgX2 = self.rectBGimg.width
+        self.bgY2 = 0
+
+        self.moving_speed = 1
+
+    def update(self):
+        self.bgX1 -= self.moving_speed
+        self.bgX2 -= self.moving_speed
+        if self.bgX1 <= -self.rectBGimg.width:
+            self.bgX1 = self.rectBGimg.width
+        if self.bgX2 <= -self.rectBGimg.width:
+            self.bgX2 = self.rectBGimg.width
+
+    def render(self):
+        screen.blit(self.bgimage, (self.bgX1, self.bgY1))
+        screen.blit(self.bgimage2, (self.bgX2, self.bgY2))
+
+class Floor():
+    def __init__(self):
+        self.bgimage = pygame.image.load("graphics/ground.png").convert()
+        self.rectBGimg = self.bgimage.get_rect()
+
+        self.bgX1 = 0
+        self.bgY1 = 300
+
+        self.bgX2 = self.rectBGimg.width
+        self.bgY2 = 300
+
+        self.moving_speed = 4
+
+    def update(self):
+        self.bgX1 -= self.moving_speed
+        self.bgX2 -= self.moving_speed
+        if self.bgX1 <= -self.rectBGimg.width:
+            self.bgX1 = self.rectBGimg.width
+        if self.bgX2 <= -self.rectBGimg.width:
+            self.bgX2 = self.rectBGimg.width
+
+    def render(self):
+        screen.blit(self.bgimage, (self.bgX1, self.bgY1))
+        screen.blit(self.bgimage, (self.bgX2, self.bgY2))
+
 # # SCORE & COLLISION FUNCTIONS - - - - - - - - - - - - - - - - - - -
 def display_score():
     current_time = int(pygame.time.get_ticks() / 1000) - start_time
@@ -115,6 +166,9 @@ bg_music.play(loops = -1)
 player = pygame.sprite.GroupSingle()
 player.add(Player())
 
+background = Background()
+floor = Floor()
+
 obstacle_group = pygame.sprite.Group()
 
 # # SURFACES & RECTANGLES - - - - - - - - - - - - - - - - - - -
@@ -145,8 +199,11 @@ while True: # <-- runs forever, renders game, until player input sets False
             exit()
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
-                game_active = True
-                start_time = int(pygame.time.get_ticks() / 1000)
+                if game_active:
+                    player_gravity = -20
+                else:
+                    game_active = True
+                    start_time = int(pygame.time.get_ticks() / 1000)
         if game_active:
             if event.type == obstacle_timer:
                 obstacle_group.add(Obstacle(choice(["fly", "snail", "snail"])))
@@ -154,8 +211,11 @@ while True: # <-- runs forever, renders game, until player input sets False
     # # RENDER GAME IF GAME_ACTIVE = TRUE - - - - - - - - - - - - - - - - - - -
     if game_active:
         # # POST-EVENT RENDERING - - - - - - - - - - - - - - - - - - -        
-        screen.blit(sky_surf, (0,0))
-        screen.blit(ground_surf, (0,300))
+        background.update()
+        background.render()
+        floor.update()
+        floor.render()
+
         score = display_score()
 
         player.draw(screen)
