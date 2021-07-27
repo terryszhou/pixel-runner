@@ -51,7 +51,6 @@ class Player(pygame.sprite.Sprite):
         self.apply_gravity()
         self.animation_state()
 
-
 class Obstacle(pygame.sprite.Sprite):
     def __init__(self, type):
         super().__init__()
@@ -62,7 +61,7 @@ class Obstacle(pygame.sprite.Sprite):
             fly_2 = pygame.image.load("graphics/Fly/fly2.png").convert_alpha()
             self.frames = [fly_1, fly_2]
             self.speed = 10
-            y_pos = 210
+            y_pos = randint(100,250)
         else:
             snail_1 = pygame.image.load("graphics/snail/snail1.png").convert_alpha()
             snail_2 = pygame.image.load("graphics/snail/snail2.png").convert_alpha()
@@ -72,7 +71,7 @@ class Obstacle(pygame.sprite.Sprite):
 
         self.animation_index = 0
         self.image = self.frames[self.animation_index]
-        self.rect = self.image.get_rect(midbottom = (randint(900,1100),y_pos))
+        self.rect = self.image.get_rect(midbottom = (1000,y_pos))
 
     def animation_state(self):
         self.animation_index += 0.1
@@ -83,15 +82,6 @@ class Obstacle(pygame.sprite.Sprite):
     def update(self):
         self.animation_state()
         self.rect.x -= self.speed
-
-        # if self.rect.y < 264:
-        #     if self.rect.y == 172:
-        #         self.rect.y += 2
-        #     elif self.rect.y == 240:
-        #         self.rect.y -= 2
-
-        #     print(self.rect.y)
-
         self.destroy()
 
     def destroy(self):
@@ -203,7 +193,7 @@ game_message_rect = game_message.get_rect(center = (400, 330))
 
 # ANIMATION TIMERS
 obstacle_timer = pygame.USEREVENT + 1
-pygame.time.set_timer(obstacle_timer, 1500) # <-- set_timer(timer variable, interval in milliseconds)
+pygame.time.set_timer(obstacle_timer, 1300) # <-- set_timer(timer variable, interval in milliseconds)
 
 # # GAME LOOP - - - - - - - - - - - - - - - - - - -
 while True: # <-- runs forever, renders game, until player input sets False
@@ -221,7 +211,7 @@ while True: # <-- runs forever, renders game, until player input sets False
                     start_time = int(pygame.time.get_ticks() / 1000)
         if game_active:
             if event.type == obstacle_timer:
-                obstacle_group.add(Obstacle(choice(["fly", "snail"])))
+                obstacle_group.add(Obstacle(choice(["fly", "fly", "snail"])))
 
     # # RENDER GAME IF GAME_ACTIVE = TRUE - - - - - - - - - - - - - - - - - - -
     if game_active:
